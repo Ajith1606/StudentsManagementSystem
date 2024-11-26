@@ -1,0 +1,73 @@
+﻿@page "/systemcodedetails/edit/{id:int}"
+@using StudentsManagement.Client.Services;
+@using StudentsManagement.Shared.Models
+@inject NavigationManager navigation;
+@inject IJSRuntime JsRuntime
+@rendermode InteractiveServer
+
+<h3>Update System Code Details</h3>
+
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <EditForm Model="systemcodedetailsobj" OnValidSubmit="UpdateSystemCodeDetails" FormName="updatesystemcodedetails">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">System Code</label>
+                            <InputText for="SystemCode" class="form-control" @bind-Value="@systemcodedetailsobj.Code" />
+                            <ValidationMessage For="() => systemcodedetailsobj.Code" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Description</label>
+                            <InputText for="Description" class="form-control" @bind-Value="@systemcodedetailsobj.Description" />
+                            <ValidationMessage For="() => systemcodedetailsobj.Description" />
+                        </div>
+                        <br />
+                    </div>
+                </div>
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary"> Update System Code Details </button>
+                    <button type="button" @onclick="() => Cancel()" class="btn btn-danger"> Back to List </button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    public SystemCodeDetails systemcodedetailsobj { get; set; } = new();
+
+    [Parameter]
+    public int id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSystemCodeDetails();
+    }
+
+    private async Task LoadSystemCodeDetails()
+    {
+        systemcodedetailsobj = await SystemCodeDetailsService.GetByIdAsync(id); 
+    }
+
+    protected async Task UpdateSystemCodeDetails()
+    {
+        var result = await SystemCodeDetailsService.UpdateAsync(systemcodedetailsobj);
+        navigation.NavigateTo("/SystemCodeDetails-list");
+    }
+
+    public void Cancel()
+    {
+        navigation.NavigateTo("/SystemCodeDetails-list");
+    }
+}
+
+

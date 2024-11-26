@@ -1,0 +1,76 @@
+﻿@page "/student/delete/{id:int}"
+@using StudentsManagement.Client.Services;
+@using StudentsManagement.Shared.Models
+@inject NavigationManager navigation;
+@inject IJSRuntime JsRuntime
+@rendermode InteractiveServer
+
+<h3>Delete Student Details</h3>
+<hr />
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <tr>
+                <th>First Name</th>
+                <td>@studentobj.FirstName</td>
+            </tr>
+             <tr>
+                <th>Middle Name</th>
+                <td>@studentobj.MiddleName</td>
+            </tr>
+            <tr>
+                <th>Last Name</th>
+                <td>@studentobj.LastName</td>
+            </tr>
+            <tr>
+                <th>Email Address</th>
+                <td>@studentobj.EmailAddress</td>
+            </tr>
+            <tr>
+                <th>Address</th>
+                <td>@studentobj.Address</td>
+            </tr>
+            <tr>
+                <th>Phone Number</th>
+                <td>@studentobj.PhoneNumber</td>
+            </tr>
+            <tr>
+                <th>Country Name</th>
+                <td>@studentobj.Country</td>
+            </tr>
+        </table>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" @onclick="Delete"> Delete Student </button>
+        <button type="button" @onclick="() => Cancel()" class="btn btn-danger"> Back to List </button>
+    </div>
+</div>
+
+@code {
+    public Student studentobj { get; set; } = new();
+
+    [Parameter]
+    public int id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStudent();
+    }
+
+    private async Task LoadStudent()
+    {
+        studentobj = await StudentService.GetStudentByIdAsync(id);
+    }
+
+    protected async Task Delete()
+    {
+        var result = await StudentService.DeleteStudentAsync(id);
+        navigation.NavigateTo("/students-list");
+    }
+
+    public void Cancel()
+    {
+        navigation.NavigateTo("/students-list");
+    }
+}
